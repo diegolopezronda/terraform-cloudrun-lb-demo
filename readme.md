@@ -23,6 +23,14 @@ pnpm install
 pnpm dev
 ```
 
+## Docker image
+Use the Dockerfile to build a Docker image for the Next.js app.
+
+## GCP Load balancing
+The terraform folder contains a terraform configuration to create a GCP load balancer for the Next.js app. 
+Please create a terraform.tfvars file using the variables indicated on the variables.tf file. 
+Don't forget to upload the Docker image to a container registry and update the image variable on the terraform.tfvars file.
+
 ## Documentation
 
 https://nextjs.org/docs
