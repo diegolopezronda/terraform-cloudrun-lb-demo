@@ -27,7 +27,7 @@ resource "google_compute_region_network_endpoint_group" "cloudrun_neg" {
   name                  = "${each.key}-neg"
   network_endpoint_type = "SERVERLESS"
   region                = each.value.region
-  app_engine {
+  cloud_run {
     service = each.key
   }
 }
