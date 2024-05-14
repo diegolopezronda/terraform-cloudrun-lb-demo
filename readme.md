@@ -1,35 +1,100 @@
-# Next.js App Router Playground
+# Terraform CloudRun Load Balancer Demo
+The goal of this demo is to illustrate on how to deploy Next.js applications to Google Cloud Platform's (GCP) Global External Application Load Balancer as Cloud Run or App Engine application using Terraform and Docker.
 
-Next.js recently introduced the App Router with support for:
+## Audience
+The intended audience is Software developers. 
+We assume that the artifact registry is already configured and that the GCP account is able to deploy all sorts of resources.
 
-- **Layouts:** Easily share UI while preserving state and avoiding re-renders.
-- **Server Components:** Making server-first the default for the most dynamic applications.
-- **Streaming:** Display instant loading states and stream in updates.
-- **Suspense for Data Fetching:** `async`/`await` support and the `use` hook for component-level fetching.
+## Dependencies
+* Node.JS
+* NPM
+* PNPM
+* GCloud CLI
+* Docker
+* Terraform
 
-The App Router can coexist with the existing `pages` directory for incremental adoption. While you **don't need to use the App Router** when upgrading to Next.js 13, we're laying the foundations to build complex interfaces while shipping less JavaScript.
+## Application Instructions
 
-## Running Locally
+### Google Cloud Plaform Configuration
+Change the current project to the target project.
 
-1. Install dependencies:
+`gcloud config set project <YOUR_PROJECT>`
 
-```sh
-pnpm install
+### Docker image
+Use the `Dockerfile` to build a Docker image.
+
+`docker build --no-cache --platform linux/amd64 -t <REPOSITORY:TAG> .`
+
+Push it to the artifact registry:
+`docker push <REPOSITORY:TAG>`
+
+### Deploy Cloud Run Applications
+`gcloud run --image <REPOSITORY:TAG>`
+
+### Notes
+`<REPOSITORY:TAG>` may look like `australia-southeast1-docker.pkg.dev/my-gcp-project/my-repository/my-application:latest`.
+
+## Load Balancing Instructions
+This repository divides the orchestration in two Terraform folders:
+
+* `/load-balancer/backends`: A Terraform project that deploys a backend.
+* `/load-balancer/frontends`: A Terraform project deploys frontends (HTTP,HTTPS) and the URL Map.
+
+#### Deploying Backend
+Your `terraform.tfvars` file may look like:
+
+```terraform
+project_id   = "my-gcp-project"
+backends = [
+  {
+    region       = "australia-southeast1"
+    service_id   = "my-first-service"
+    is_cloud_run = true # This is a Cloud run Application
+  },
+  {
+    region       = "us-central2"
+    service_id   = "my-second-service"
+    is_cloud_run = false # This is an App Engine Application.
+  }
+]
 ```
 
-2. Start the dev server:
+#### Deploying Frontend
+Your `terraform.tfvars` file may look like:
+```terraform
+project_id         = "my-gcp-project"
+ip_address         = "24.500.800.3"
+domain             = "my-domain.com"
+load_balancer_name = "my-load-balancer"
+default_service    = "my-second-service-backend"
+path_rules = [
+  {
+    paths   = ["/first-path/*"]
+    service = "my-first-service-backend"
+  },
+  {
+    paths   = ["/second-path/*"]
+    service = "my-second-service-backend"
+  }
+]
 
-```sh
-pnpm dev
 ```
 
-## Docker image
-Use the Dockerfile to build a Docker image for the Next.js app.
+### Notes about Load Balancers on GCP
+On GCP, a load balancer is not a single component, rather a group of resources:
 
-## GCP Load balancing
-The terraform folder contains a terraform configuration to create a GCP load balancer for the Next.js app. 
-Please create a terraform.tfvars file using the variables indicated on the variables.tf file. 
-Don't forget to upload the Docker image to a container registry and update the image variable on the terraform.tfvars file.
+#### Backends
+* Application: The actual code. Could be Google's App Engine, Cloud Functions, API Gateway, or Cloud Run service.
+* Network Enpoint Group: A single endpoint within Google's network that resolves to the Application.
+* Backend Service: A backend service defines how Cloud Load Balancing distributes traffic. The backend service configuration contains a set of values, such as the protocol used to connect to backends, various distribution and session settings, health checks, and timeouts.
+
+#### Frontends
+* Forwarding Rule: A forwarding rule specifies how to route network traffic to the backend services of a load balancer. A forwarding rule includes an IP address, an IP protocol, and one or more ports on which the load balancer accepts traffic.
+* Target Proxy: Target proxies terminate incoming connections from clients and create new connections from the load balancer to the backends.
+* SSL Certificate: An SSL certificate is a bit of code on your web server that provides security for online communications. When a web browser contacts your secured website, the SSL certificate enables an encrypted connection. If your Target Proxy works with HTTPS you may need to set SSL Certificate associated to the domain of your application.
+
+ #### General
+ * URL Map: The URL Map is where the Backends and Frontends come togheter. It also maps the website URL to different backends (hence the name).
 
 ## Documentation
 
