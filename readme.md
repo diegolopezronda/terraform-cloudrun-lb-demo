@@ -45,18 +45,16 @@ Your `terraform.tfvars` file may look like:
 
 ```terraform
 project_id   = "my-gcp-project"
-backends = [
-  {
-    region       = "australia-southeast1"
-    service_id   = "my-first-service"
-    is_cloud_run = true # This is a Cloud run Application
-  },
-  {
-    region       = "us-central2"
-    service_id   = "my-second-service"
-    is_cloud_run = false # This is an App Engine Application.
+appengine_backends = {
+  my-first-app = {
+    region = "australia-southeast1"
   }
-]
+}
+cloudrun_backends = {
+  my-second-app = {
+    region = "australia-southeast1"
+  }
+}
 ```
 
 #### Deploying Frontend
@@ -65,16 +63,16 @@ Your `terraform.tfvars` file may look like:
 project_id         = "my-gcp-project"
 ip_address         = "24.500.800.3"
 domain             = "my-domain.com"
-load_balancer_name = "my-load-balancer"
-default_service    = "my-second-service-backend"
+load_balancer_name      = "my-load-balancer"
+default_service   = "my-second-app-backend"
 path_rules = [
   {
     paths   = ["/first-path/*"]
-    service = "my-first-service-backend"
+    service = "my-first-app-backend"
   },
   {
     paths   = ["/second-path/*"]
-    service = "my-second-service-backend"
+    service = "my-second-app-backend"
   }
 ]
 
