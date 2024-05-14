@@ -14,7 +14,7 @@ resource "google_compute_region_network_endpoint_group" "appengine_neg" {
 
 resource "google_compute_backend_service" "appengine_backend_service" {
   for_each              = var.appengine_backends
-  name                  = "${each.key}-backend"
+  name                  = "${each.key}-bs"
   load_balancing_scheme = "EXTERNAL_MANAGED"
   protocol              = "HTTPS"
   backend {
@@ -34,7 +34,7 @@ resource "google_compute_region_network_endpoint_group" "cloudrun_neg" {
 
 resource "google_compute_backend_service" "cloudrun_backend_service" {
   for_each              = var.cloudrun_backends
-  name                  = "${each.key}-backend"
+  name                  = "${each.key}-bs"
   load_balancing_scheme = "EXTERNAL_MANAGED"
   protocol              = "HTTPS"
   backend {
