@@ -29,8 +29,8 @@ Use the `Dockerfile` to build a Docker image.
 Push it to the artifact registry:
 `docker push <REPOSITORY:TAG>`
 
-### Deploy Cloud Run Applications
-`gcloud run --image <REPOSITORY:TAG>`
+### Deploy as a Cloud Run Application
+`gcloud run deploy <SERVICE_NAME> --image <REPOSITORY:TAG>`
 
 ### Notes
 `<REPOSITORY:TAG>` may look like `australia-southeast1-docker.pkg.dev/my-gcp-project/my-repository/my-application:latest`.
@@ -40,6 +40,8 @@ This repository divides the orchestration in two Terraform folders:
 
 * `/load-balancer/backends`: A Terraform project that deploys a backend.
 * `/load-balancer/frontends`: A Terraform project deploys frontends (HTTP,HTTPS) and the URL Map.
+
+You may need to deploy backends first then frontends.
 
 #### Deploying Backend
 Your `terraform.tfvars` file may look like:
