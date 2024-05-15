@@ -58,16 +58,16 @@ cloudrun_backends = {
     region = "australia-southeast1"
   }
 }
-
+```
 
 This example may result in the following infrastructure:
 
-* Network Endpoint Groups (Serverless):
-* * my-first-app-neg
-* * my-second-app-neg
-* Backends (HTTPS)
-* * my-first-app-bs (australia-southeast1/networkEndpointGroups/my-first-app-neg)
-* * my-second-app-bs (australia-southeast1/networkEndpointGroups/my-second-app-neg)
+* **Network Endpoint Groups (Serverless)**
+  * my-first-app-neg
+  * my-second-app-neg
+* **Backends (HTTPS)**
+  * my-first-app-bs (australia-southeast1/networkEndpointGroups/my-first-app-neg)
+  * my-second-app-bs (australia-southeast1/networkEndpointGroups/my-second-app-neg)
 
 #### Deploying Frontend
 Your `terraform.tfvars` file may look like:
@@ -91,21 +91,21 @@ path_rules = [
 
 This example may result in the following infrastructure:
 
-* URL Maps:
-* * my-load-balancer-url-map (default: backendServices/my-second-app-bs)
-* Target Proxies
-* * my-load-balancer-http-proxy  
-* * my-load-balancer-https-proxy
-* SSL Certificates (Managed)
-* * my-load-balancer-ssl-certificate
-* * * Domain: my-domain.com
-* Forwarding Rules (TCP):
-* * my-load-balancer-http-forwarding-rule:
-* * * IP: 24.500.800.3
-* * * Target Proxy: my-load-balancer-http-proxy
-* * my-load-balancer-https-forwarding-rule:
-* * * IP: 24.500.800.3
-* * * Target Proxy: my-load-balancer-https-proxy
+* **URL Maps**
+  * my-load-balancer-url-map (default: backendServices/my-second-app-bs)
+* **Target Proxies**
+  * my-load-balancer-http-proxy  
+  * my-load-balancer-https-proxy
+* **SSL Certificates (Managed)**
+  * my-load-balancer-ssl-certificate
+    * Domain: my-domain.com
+* **Forwarding Rules (TCP)**
+  * my-load-balancer-http-forwarding-rule:
+    * IP: 24.500.800.3
+    * Target Proxy: my-load-balancer-http-proxy
+  * my-load-balancer-https-forwarding-rule:
+    * IP: 24.500.800.3
+    * Target Proxy: my-load-balancer-https-proxy
 
 ### Notes about Load Balancers on GCP
 On GCP, a load balancer is not a single component, rather a group of resources:
