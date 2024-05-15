@@ -14,6 +14,7 @@ We assume that the artifact registry is already configured and that the GCP acco
 * Terraform
 
 ## Application Instructions
+A Next.js application can be found in the `application` folder.
 
 ### Google Cloud Plaform Configuration
 Change the current project to the target project.
