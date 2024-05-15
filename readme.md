@@ -30,7 +30,7 @@ Push it to the artifact registry:
 `docker push <REPOSITORY:TAG>`
 
 ### Deploy as a Cloud Run Application
-`gcloud run deploy <SERVICE_NAME> --image <REPOSITORY:TAG>`
+`gcloud run deploy <SERVICE_NAME> --image <REPOSITORY:TAG> --region <REGION> --platform managed`
 
 ### Notes
 `<REPOSITORY:TAG>` may look like `australia-southeast1-docker.pkg.dev/my-gcp-project/my-repository/my-application:latest`.
